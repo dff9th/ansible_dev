@@ -1,0 +1,4 @@
+- hosts: aws-dev
+  become: no
+  tasks:
+    - include: task/git_latest.yml

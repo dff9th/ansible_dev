@@ -1,0 +1,23 @@
+- name: Install build modules
+  become: yes
+  yum:
+    name:
+      - git
+      - gcc
+      - openssl-devel
+      - curl-devel
+      - expat-devel
+- name: Make tmp direcrory if not
+  file: path=~/tmp
+        state=directory 
+- name: Clone source
+  git:
+    repo: https://github.com/git/git.git
+    dest: ~/tmp/git
+- name: Build git
+  shell: >
+    {{ item }}
+    chdir=~/tmp/git
+  with_items:
+    - make prefix=/usr/local all
+    - sudo make prefix=/usr/local install

@@ -1,0 +1,11 @@
+- name: Install build modules
+  become: yes
+  yum:
+    name:
+      - readline-devel
+      - bzip2-devel
+      - libsqlite3x-devel
+- name: Clone source
+  git:
+    repo: https://github.com/yyuu/pyenv.git
+    dest: ~/.cache/pyenv
