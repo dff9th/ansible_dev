@@ -3,4 +3,60 @@
 - name: Clone git source
   git:
     repo: "https://github.com/git/git.git"
-    dest: "/home/knock/tmp/git"
+    dest: "{{ ansible_env.HOME }}/tmp/git"
+    version: "maint"
+- name: Install dependency tools
+  become: yes
+  apt:
+    pkg:
+      - asciidoc
+      - xmlto
+      - docbook2x
+      - libcurl4-openssl-dev
+- name: Make configure
+  command:
+    chdir: "{{ ansible_env.HOME }}/tmp/git"
+    argv:
+      - make
+      - configure
+- name: Do configure
+  command:
+    chdir: "{{ ansible_env.HOME }}/tmp/git"
+    argv:
+      - ./configure
+      - --prefix=/usr/local
+- name: Build
+  command:
+    chdir: "{{ ansible_env.HOME }}/tmp/git"
+    argv:
+      - make
+      - all
+      - doc
+      - info
+- name: Install
+  become: yes
+  command:
+    chdir: "{{ ansible_env.HOME }}/tmp/git"
+    argv:
+      - make
+      - install
+      - install-doc
+      - install-html
+      - install-info
+- name: Make completion directory
+  file:
+    path: "/usr/local/share/completion"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+- name: Copy completion files
+  become: yes
+  copy:
+    src: "{{ item }}"
+    dest: "/usr/local/share/completion/"
+    owner: root
+    group: root
+    mode: "0644"
+  with_fileglob:
+    - "{{ ansible_env.HOME }}/tmp/git/contrib/completion/git-completion.*"
