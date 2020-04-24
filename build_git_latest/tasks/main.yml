@@ -1,0 +1,6 @@
+---
+# tasks file for build_git_latest
+- name: Clone git source
+  git:
+    repo: "https://github.com/git/git.git"
+    dest: "/home/knock/tmp/git"
